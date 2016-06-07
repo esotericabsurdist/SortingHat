@@ -46,7 +46,7 @@ public class SortingHat
 	//====================================================================================================================
 	public void selectionSort()
 	/*
-	 * Selection sort is O(n^2), in-place, stable, adaptive. 
+	 * Selection sort is O(n^2), in-place, stable, not-adaptive. 
 	 * It works by selecting the smallest element in the array and placing it at the front.  It then finds the next smallest
 	 * element and places it in the location adjacent and so on until the array is sorted. 
 	 */
@@ -90,7 +90,54 @@ public class SortingHat
 				}
 			}
 		}
-	
+	//====================================================================================================================
+	public void quickSort()
+	/*
+	 * This function merely starts the quicksort algorithm such that sort can be invoked without the need 
+	 * for passing arguments.
+	 */
+	{
+		quickSort(1, this.mData.size());
+	}
+	//====================================================================================================================
+	private void quickSort(int lo, int hi)
+	{
+		/*
+		 * TODO
+		 */
+	}
+	//====================================================================================================================
+	public void mergeSort()
+	/*
+	 * This is an iterative implementation of merge sort.  It should deliver better performance than a recursive one by 
+	 * elimination of the call stack.  
+	 * 
+	 * Mergesort is n*log(n), non-adaptive, stable(with modification, merge the left element first when two equal elements are 
+	 * merged), inplace (if using linked lists, rearrange the pointers, otherwise not)
+	 */
+	{
+		for(int i = 1; i <= (this.mData.size()/2); i *= 2)
+			/*
+			 * For each iteration, we merge another "level", so we count by doubling the index, hence i*=2
+			 * i follows: 1, 2, 4, 8, 16, ... , number of elements/2
+			 * 
+			 * Here we are sorting inplace, so we conceptually define the "levels" by mapping the indices. If we are on the 
+			 * lowest level, such that the number of subarrays is equal to n, then i = 1, if we go up one "level", i=2 and so on.
+			 * The second to highest level, i=n/2.
+			 */
+		{
+			for(int j = i; j < this.mData.size(); j += 2*i)
+				/*
+				 * For an iteration of i, merge another "level", this translates wholly to: 
+				 * merge elements in groups of i, that is merge in groups of 1, then in groups of 2, then in groups of 4 an so on.
+				 * To increment j by groups of size i, we count by 2*i, thus j+=2*i.
+				 */
+			{
+				
+			}
+			
+		}
+	}
 	//====================================================================================================================
 	private void swap(int tIndexX, int tIndexY)
 	{
