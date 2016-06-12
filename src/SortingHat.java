@@ -11,17 +11,20 @@ import java.util.Collections;
 
 public class SortingHat 
 {
-	ArrayList<Integer> mData;
+	ArrayList<Integer> mData; // Used for storing unsorted and sorted data in the case of in-place sorts
+	ArrayList<Integer> mHeap; // Used for heap sort. 
 	
 	//====================================================================================================================
 	SortingHat()
 	{
 		this.mData = new ArrayList<Integer>();
+		this.mData = new ArrayList<Integer>();
 	}
 	//====================================================================================================================
 	SortingHat(ArrayList<Integer> tData)
 	{
-		this.mData = tData; 
+		this.mData = tData; // give it the data for sorting.
+		this.mHeap = new ArrayList<Integer>(); // Don't give it any data, save that for buildHeap();
 	}
 	//====================================================================================================================
 	public void Bubblesort()
@@ -38,7 +41,7 @@ public class SortingHat
 			{
 				if(this.mData.get(j-1) > this.mData.get(j))
 				{
-					swap(j-1, j);
+					swap(this.mData, j-1, j);
 				}
 			}
 		}
@@ -55,16 +58,24 @@ public class SortingHat
 		
 		for(int i = 0; i < this.mData.size(); i++)
 		{
-			tCurrentMin = i;
 			
+			tCurrentMin = i;
+				
 			// starting from i, find the location of the smallest element
 			for(int j = i; j < this.mData.size(); j++)
 			{
-				if(this.mData.get(j) < this.mData.get(tCurrentMin))  tCurrentMin = j;
+				if(this.mData.get(j) < this.mData.get(tCurrentMin))  
+				{
+					tCurrentMin = j;
+				}
+				
 			}
+			// now that we have the smallest element, swap the element to the back of the sorted portion of the array. 
+			// in the case that consecutive values are equal, swapping i and tCurrentMin will make this sort unstable.
+			// if we make a check to compare i and tCurrentMin, we can make this algorithm stable. 
+			swap(this.mData, i, tCurrentMin); 
 			
-			// now that we have the smallest element, swap the element to the back of the sorted end of the array. 
-			swap(i, tCurrentMin); 
+			
 		}
 	}	
 	//====================================================================================================================
@@ -86,7 +97,7 @@ public class SortingHat
 					 * list at the front of the array grows by 1 element until the entire array is sorted. 
 					 */
 					if(this.mData.get(j) < this.mData.get(j-1)) 
-						swap(j, j-1);
+						swap(this.mData, j, j-1);
 				}
 			}
 		}
@@ -132,31 +143,125 @@ public class SortingHat
 				 * merge elements in groups of i, that is merge in groups of 1, then in groups of 2, then in groups of 4 an so on.
 				 * To increment j by groups of size i, we count by 2*i, thus j+=2*i.
 				 */
-			{
 				
+			{
+				/*
+				 * TODO MERGE
+				 */
 			}
 			
 		}
 	}
 	//====================================================================================================================
-	private void swap(int tIndexX, int tIndexY)
+	public void heapSort()
+	/*
+	 * This function sorts data stored in the heap. Heap sort is an in-place algorithm. Worst case is n*log(n). 
+	 * It sorts by swapping the last element, the n-1 element in the array to the front of the array, then reheapifies
+	 * (reheap down) until the heap property is restored, but only restored as a heap of size n.  Then the n-2 element is
+	 * swapped to the front and then reheapifies as an array of size n-2, then the same is carried out for n-3 and so on, 
+	 * up to the n-n element. At this point the array will be ordered. This is better understood visually.  
+	 * The heap must be initialized and built to call this function. 
+	 * To build the heap, call buildHeap( data ) where data is an arraylist of the values to be placed in the heap.
+	 */
+	{
+		for(int i = this.mHeap.size()-1; i > 0; i--)
+		{
+			swap(this.mHeap, 0, i);
+			reheapDown(0, i);
+		}
+	}
+	//====================================================================================================================
+	public void buildHeap(ArrayList<Integer> tData)
+	/*
+	 * Constructs a maximum heap from tData
+	 */
+	{
+		for(int i = 0; i < tData.size(); i++)
+		{
+			this.mHeap.add(tData.get(i));
+			reheapUp(this.mHeap.size()-1); 
+		}
+	}
+	//====================================================================================================================
+	private void reheapUp(int tCurrentIndex)
+	/*
+	 * This takes the element from the tCurrentIndex position (the last inserted element in our case) and swaps it upwards 
+	 * recursively until the heap property is restored. 
+	 * The heap property in this case is a maximum heap, parents always have smaller values than children nodes. 
+	 */
+	{
+		int tParentIndex = (tCurrentIndex - 1)/2; 
+		
+		if(this.mHeap.get(tParentIndex) < this.mHeap.get(tCurrentIndex))
+		{
+			swap(this.mHeap, tParentIndex, tCurrentIndex);
+			reheapUp(tParentIndex);
+		}
+		
+	}
+	//====================================================================================================================
+	private void reheapDown(int tCurrentIndex, int tHeapLimit)
+	{
+		
+		// Find the index in the heap of each child based on the current parent. 
+		int tLeftChild = (tCurrentIndex*2)+1;
+		int tRightChild = (tCurrentIndex*2)+2;
+
+		if( (tCurrentIndex < tHeapLimit) && (tRightChild < tHeapLimit) ) // don't access a child that isn't there.
+		{
+			// save data into temporary variables to reduce function calls and enhance clarity of code. 
+			int	tLeftChildData = this.mHeap.get(tLeftChild);
+			int tRightChildData = this.mHeap.get(tRightChild);
+			int tCurrentIndexData = this.mHeap.get(tCurrentIndex);
+			
+			if( (tLeftChildData >= tRightChildData) && (tCurrentIndexData < tLeftChildData) ) 
+			/*
+			 *  if left child is greater or equal than right child and current is less than the child, swap them,
+			 *  then check again. 
+			 */
+			{
+					swap(this.mHeap, tLeftChild, tCurrentIndex);
+					reheapDown(tLeftChild, tHeapLimit);
+			}
+			else if( (tLeftChildData < tRightChildData) && (tCurrentIndexData < tRightChildData) )
+			/*
+			 * If right child is greater than left child and current is less than the child, swap then,
+			 * then check again. 
+			 */
+			{
+					swap(this.mHeap, tRightChild, tCurrentIndex);
+					reheapDown(tRightChild, tHeapLimit);
+			}
+		}
+	}
+	//====================================================================================================================
+	private void swap(ArrayList<Integer> tData, int tIndexX, int tIndexY)
 	{
 		// Simple swap
-		int tValX = this.mData.get(tIndexX);
-		int tValY = this.mData.get(tIndexY);
+		int tValX = tData.get(tIndexX);
+		int tValY = tData.get(tIndexY);
 		
-		this.mData.set(tIndexX, tValY);
-		this.mData.set(tIndexY, tValX);
+		tData.set(tIndexX, tValY);
+		tData.set(tIndexY, tValX);
 	}
 	//====================================================================================================================
 	public void printData()
 	{
-		System.out.print("\nValues:\n");
+		System.out.print("\nData:\n");
 		
 		for(Integer val : this.mData)
 		{
 			System.out.print(val + " ");
 		}
+		
+		System.out.print("\nHeap:\n");
+		
+		for(Integer val : this.mHeap)
+		{
+			System.out.print(val + " ");
+		}
+		
+		
 	}
 	//====================================================================================================================
 	public void randomizeData()
