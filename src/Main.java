@@ -22,37 +22,18 @@ public class Main {
 		readFile(tFileName, data);
 		
 		SortingHat greatSorter = new SortingHat(data);
-		/*
-		greatSorter.printData();
-		greatSorter.Bubblesort();
-		greatSorter.printData();
-		
-		greatSorter.randomizeData();
-		*/
 		
 		
-		/*
 		greatSorter.printData();
-		greatSorter.selectionSort();
-		greatSorter.printData();
-		*/
 		
-		/*
-		greatSorter.randomizeData();
-		
-		greatSorter.printData();
-		greatSorter.insertionSort();
-		greatSorter.printData();
-		*/
+		//greatSorter.bubblesort();
+		//greatSorter.selectionSort();
+		//greatSorter.insertionSort();
+		//greatSorter.heapSort();
+		greatSorter.quickSort();
 		
 		
-		/*
-		greatSorter.buildHeap(data);
 		greatSorter.printData();
-		greatSorter.heapSort();
-		greatSorter.printData();
-		*/
-		
 		
 		keyboard.close();
 	}

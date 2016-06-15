@@ -2,7 +2,8 @@
  *  Robert W. Mitchell
  *  June 2016
  *  
- *  The SortingHat class provides a simple implementation of several sorting algorithms. 
+ *  The SortingHat class provides a simple implementation of several sorting algorithms. For simplicity, the implementations 
+ *  all use a global array for sorting data, mData.
  *  
  */
 
@@ -27,7 +28,7 @@ public class SortingHat
 		this.mHeap = new ArrayList<Integer>(); // Don't give it any data, save that for buildHeap();
 	}
 	//====================================================================================================================
-	public void Bubblesort()
+	public void bubblesort()
 	/*
 	 *  Bubble sort is O(n^2), in-place, stable (with modification), adaptive (with modification)
 	 *  Beginning with the first element, it is swapped upwards until it is greater than all preceding elements. 
@@ -36,7 +37,7 @@ public class SortingHat
 	 */
 	{
 		for(int i = 0; i < this.mData.size(); i++)
-		{
+		{                                                                               
 			for(int j = 1; j < (this.mData.size() - i); j++)
 			{
 				if(this.mData.get(j-1) > this.mData.get(j))
@@ -104,18 +105,56 @@ public class SortingHat
 	//====================================================================================================================
 	public void quickSort()
 	/*
-	 * This function merely starts the quicksort algorithm such that sort can be invoked without the need 
-	 * for passing arguments.
+	 * This function is merely starts the quicksort algorithm such that sort can be invoked without the need 
+	 * for passing arguments. It is the Hoare implementation. 
 	 */
 	{
-		quickSort(1, this.mData.size());
+		quickSort(0, this.mData.size()-1);
 	}
 	//====================================================================================================================
-	private void quickSort(int lo, int hi)
+	private void quickSort(int tLeft, int tRight)
 	{
-		/*
-		 * TODO
-		 */
+		int tPartitionIndex = partition(tLeft, tRight); 
+		
+		if( tLeft < (tPartitionIndex-1) ) quickSort(tLeft, tPartitionIndex-1);
+		if( tRight > tPartitionIndex ) quickSort(tPartitionIndex, tRight);
+	}
+	//====================================================================================================================
+	private int partition(int tLeft, int tRight)
+	{	
+		int tPivot = this.mData.get( (tLeft+tRight)/2 );	// choose the middle of the array for the pivot
+		int i = tLeft;
+		int j = tRight;
+		
+		while( i <= j )
+		{
+			/*
+			 * 
+			 * an alternate implemenation with for loops lol :
+		
+			for( i = tLeft; this.mData.get(i) >= tPivot; i++) ;
+			
+			for( j = tRight; this.mData.get(j) >= tPivot; j--) ;
+			 */
+			
+			while( this.mData.get(i) < tPivot)
+			{
+				i++; // starting at the beginning, move i up to the index of a value greater than the pivot.
+			}
+			while( this.mData.get(j) > tPivot )
+			{
+				j--; // starting at the end, move j down to the index of a value less than the pivot.
+			}
+			
+			if(i <= j ) // i has passed j, don't  swap.
+			{
+				swap(this.mData, i, j);
+				i++;
+				j--;
+			}
+		}
+		
+		return i;
 	}
 	//====================================================================================================================
 	public void mergeSort()
@@ -164,6 +203,8 @@ public class SortingHat
 	 * To build the heap, call buildHeap( data ) where data is an arraylist of the values to be placed in the heap.
 	 */
 	{
+		buildHeap(this.mData); 
+		
 		for(int i = this.mHeap.size()-1; i > 0; i--)
 		{
 			swap(this.mHeap, 0, i);
@@ -171,9 +212,10 @@ public class SortingHat
 		}
 	}
 	//====================================================================================================================
-	public void buildHeap(ArrayList<Integer> tData)
+	private void buildHeap(ArrayList<Integer> tData)
 	/*
-	 * Constructs a maximum heap from tData
+	 * Constructs a maximum heap from tData using the bottom up approach, which features many more operations than the 
+	 * top down approach. To construct the heap in place by the top down method is more efficient. 
 	 */
 	{
 		for(int i = 0; i < tData.size(); i++)
@@ -235,6 +277,23 @@ public class SortingHat
 		}
 	}
 	//====================================================================================================================
+	public void countingSort()
+	/*
+	 * Counting Sort seeks to improve the worst case performance of comparison based sorting algorithms. It usually features
+	 * 3 or 4 for loops in succession producing O(n) performance. However, this algorithm is not good for ranges of data
+	 * such that the highest element is greater than n^2.  If this is the case, the performance degrades to O(n^2). I think...
+	 * For this reason, counting sort is not good for large spreads of data.  It is better to have a large data set of close 
+	 * values, than a data set of low to high values. 
+	 */
+	{
+		ArrayList<Integer> counts = new ArrayList<Integer>();
+		
+		/*
+		 * TODO
+		 */
+	}
+	//====================================================================================================================
+
 	private void swap(ArrayList<Integer> tData, int tIndexX, int tIndexY)
 	{
 		// Simple swap
@@ -253,7 +312,7 @@ public class SortingHat
 		{
 			System.out.print(val + " ");
 		}
-		
+		/*
 		System.out.print("\nHeap:\n");
 		
 		for(Integer val : this.mHeap)
@@ -261,7 +320,7 @@ public class SortingHat
 			System.out.print(val + " ");
 		}
 		
-		
+		*/
 	}
 	//====================================================================================================================
 	public void randomizeData()
